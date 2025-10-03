@@ -1,176 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>UNO Game vs Bot/Player (Enhanced Responsive with Sounds)</title>
     <link rel="stylesheet" href="src/output.css" />
-</head>
-<body class="bg-emerald-900 text-white font-sans flex justify-center items-center min-h-screen animate-pulse-subtle sm:px-2">
-
+  </head>
+  <body
+    class="bg-emerald-900 text-white font-sans flex justify-center items-center min-h-screen sm:px-2"
+  >
     <!-- Loading Screen -->
-    <div id="loading-screen" class="fixed inset-0 bg-emerald-900 flex flex-col justify-center items-center z-50">
-        <div class="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-white text-lg">Loading UNO Game...</p>
-        <div class="w-64 bg-gray-700 rounded-full h-2 mt-4">
-            <div id="loading-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-        </div>
+    <div
+      id="loading-screen"
+      class="fixed inset-0 bg-emerald-900 flex flex-col justify-center items-center z-50"
+    >
+      <div
+        class="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"
+      ></div>
+      <p class="text-white text-lg">Loading UNO Game...</p>
+      <div class="w-64 bg-gray-700 rounded-full h-2 mt-4">
+        <div
+          id="loading-bar"
+          class="bg-green-500 h-2 rounded-full transition-all duration-300"
+          style="width: 0%"
+        ></div>
+      </div>
     </div>
 
-    <img id="background-media" class="fixed inset-0 w-full h-full object-cover z-[-1]" src="assets/background.gif" alt="Animated background">
-    <img id="game-background-media" class="hidden fixed inset-0 w-full h-full object-cover z-[-1]" src="assets/game-background.jpg" alt="In-game background">
+    <img
+      id="background-media"
+      class="fixed inset-0 w-full h-full object-cover z-[-1]"
+      src="assets/background.gif"
+      alt="Animated background"
+    />
+    <img
+      id="game-background-media"
+      class="hidden fixed inset-0 w-full h-full object-cover z-[-1]"
+      src="assets/game-background.jpg"
+      alt="In-game background"
+    />
 
-    <div id="game-container" class="w-full max-w-7xl h-screen md:h-[95vh] flex flex-col border-yellow-400 md:border-2 md:rounded-lg p-2 md:p-4 shadow-2xl opacity-0 transition-opacity duration-500 sm:p-3">
-        <div id="info-bar" class="flex flex-col sm:flex-row justify-around p-2 md:p-3 bg-black/20 rounded-md mb-2 md:mb-4 text-xs md:text-lg gap-2 sm:gap-0">
-            <div>Saldo: $<span id="balance">5000</span></div>
-            <div>Taruhan: $<span id="current-bet">0</span> (x<span id="multiplier">1</span>)</div>
-            <div>Giliran: <span id="turn-indicator">Pemain</span></div>
-            <div>Streak: <span id="streak">0</span></div>
+    <div
+      id="game-container"
+      class="w-full max-w-7xl h-screen md:h-[95vh] flex flex-col border-yellow-400 md:border-2 md:rounded-lg p-2 md:p-4 shadow-2xl opacity-0 transition-opacity duration-500 sm:p-3"
+    >
+      <div
+        id="info-bar"
+        class="flex flex-col sm:flex-row justify-around p-2 md:p-3 bg-black/20 rounded-md mb-2 md:mb-4 text-xs md:text-lg gap-2 sm:gap-0"
+      >
+        <div>Saldo: $<span id="balance">5000</span></div>
+        <div>
+          Taruhan: $<span id="current-bet">0</span> (x<span id="multiplier"
+            >1</span
+          >)
         </div>
-        
-        <!-- Achievement Notification -->
-        <div id="achievement-toast" class="hidden fixed top-4 right-4 bg-yellow-500 text-black p-4 rounded-lg shadow-lg z-50 max-w-sm">
-            <div class="flex items-center gap-3">
-                <span id="achievement-icon" class="text-2xl">🏆</span>
-                <div>
-                    <div id="achievement-title" class="font-bold"></div>
-                    <div id="achievement-desc" class="text-sm"></div>
-                </div>
-            </div>
+        <div>Giliran: <span id="turn-indicator">Pemain</span></div>
+        <div>Streak: <span id="streak">0</span></div>
+      </div>
+
+      <!-- Ganti dengan versi lebih sederhana -->
+      <div
+        id="turn-indicator-banner"
+        class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-4 py-2 rounded-lg font-bold z-50 shadow-lg border-2 border-yellow-300 text-sm"
+      >
+        🎮 GILIRAN ANDA!
+      </div>
+
+      <!-- Achievement Notification -->
+      <div
+        id="achievement-toast"
+        class="hidden fixed top-4 right-4 bg-yellow-500 text-black p-4 rounded-lg shadow-lg z-50 max-w-sm"
+      >
+        <div class="flex items-center gap-3">
+          <span id="achievement-icon" class="text-2xl">🏆</span>
+          <div>
+            <div id="achievement-title" class="font-bold"></div>
+            <div id="achievement-desc" class="text-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Notification -->
+      <div
+        id="side-notification"
+        class="hidden fixed top-4 left-4 bg-blue-600 text-white p-3 rounded-lg shadow-lg z-50 max-w-xs transition-all duration-300 transform -translate-x-full"
+      >
+        <div class="flex items-center gap-2">
+          <span id="side-notification-icon" class="text-lg">ℹ️</span>
+          <div id="side-notification-message" class="text-sm"></div>
+        </div>
+      </div>
+
+      <div
+        id="game-area"
+        class="flex-grow flex flex-col justify-between items-center w-full relative"
+      >
+        <div id="opponent-area" class="w-full text-center">
+          <h3
+            id="opponent-label"
+            class="text-lg md:text-xl font-bold mb-1 md:mb-2"
+          >
+            Tangan Lawan
+          </h3>
+          <div
+            id="opponent-hand"
+            class="flex justify-center items-center min-h-[100px] sm:min-h-[120px] md:min-h-[160px] flex-wrap p-1 gap-1 sm:gap-2 md:gap-2"
+          >
+            <!-- Kartu lawan akan muncul di sini -->
+          </div>
         </div>
 
-        <div id="game-area" class="flex-grow flex flex-col justify-between items-center w-full">
-            <div id="opponent-area" class="w-full text-center">
-                <h3 id="opponent-label" class="text-lg md:text-xl font-bold mb-1 md:mb-2">Tangan Lawan</h3>
-                <div id="opponent-hand" class="flex justify-center items-center min-h-[100px] sm:min-h-[120px] md:min-h-[160px] flex-wrap p-1 gap-1 sm:gap-2 md:gap-2">
-                    <!-- Kartu lawan akan muncul di sini -->
-                </div>
-            </div>
-            
-            <div id="game-deck" class="flex gap-2 sm:gap-4 md:gap-8 my-2 md:my-4 items-center flex-wrap justify-center">
-                <div id="draw-pile" class="cursor-pointer transform transition-transform duration-200 hover:scale-105">
-                    <img src="assets/cards/back.png" alt="Draw Pile" class="w-16 sm:w-20 md:w-24 lg:w-28 h-22 sm:h-28 md:h-36 lg:h-40 rounded-lg shadow-md transition-all duration-200">
-                </div>
-                <div id="discard-pile" class="w-16 sm:w-20 md:w-24 lg:w-28 h-22 sm:h-28 md:h-36 lg:h-40 relative">
-                    <!-- Kartu discard akan muncul di sini -->
-                </div>
-            </div>
-            
-            <div id="player-area" class="w-full text-center">
-                <h3 class="text-lg md:text-xl font-bold mb-1 md:mb-2">Tangan Anda</h3>
-                <div id="player-hand" class="flex justify-center items-center min-h-[100px] sm:min-h-[120px] md:min-h-[160px] flex-wrap p-1 gap-1 sm:gap-2 md:gap-2">
-                    <!-- Kartu player akan muncul di sini -->
-                </div>
-            </div>
+        <div
+          id="game-deck"
+          class="flex gap-2 sm:gap-4 md:gap-8 my-2 md:my-4 items-center flex-wrap justify-center"
+        >
+          <div
+            id="draw-pile"
+            class="cursor-pointer transform transition-transform duration-200 hover:scale-105"
+          >
+            <img
+              src="assets/cards/back.png"
+              alt="Draw Pile"
+              class="w-16 sm:w-20 md:w-24 lg:w-28 h-22 sm:h-28 md:h-36 lg:h-40 rounded-lg shadow-md transition-all duration-200"
+            />
+          </div>
+          <div
+            id="discard-pile"
+            class="w-16 sm:w-20 md:w-24 lg:w-28 h-22 sm:h-28 md:h-36 lg:h-40 relative"
+          >
+            <!-- Kartu discard akan muncul di sini -->
+          </div>
         </div>
-        
-        <div id="actions" class="text-center p-1 md:p-2 flex justify-center gap-2 sm:gap-4 flex-wrap">
-            <button id="uno-button" class="hidden px-3 py-2 sm:px-4 md:px-6 sm:py-2 md:py-3 text-sm sm:text-base md:text-xl font-bold bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-all animate-pulse min-w-[80px]" aria-label="Declare UNO">UNO!</button>
-            <button id="call-uno-on-opponent-button" class="hidden px-3 py-2 sm:px-4 md:px-6 sm:py-2 md:py-3 text-sm sm:text-base md:text-xl font-bold bg-yellow-400 text-black rounded-lg shadow-md hover:bg-yellow-500 transition-all min-w-[80px]">Panggil UNO Lawan!</button>
+
+        <div id="player-area" class="w-full text-center">
+          <h3 class="text-lg md:text-xl font-bold mb-1 md:mb-2">Tangan Anda</h3>
+          <div
+            id="player-hand"
+            class="flex justify-center items-center min-h-[100px] sm:min-h-[120px] md:min-h-[160px] flex-wrap p-1 gap-1 sm:gap-2 md:gap-2"
+          >
+            <!-- Kartu player akan muncul di sini -->
+          </div>
         </div>
+      </div>
+
+      <!-- Action Buttons - Positioned in the middle -->
+      <div
+        id="actions"
+        class="absolute left-1/2 transform -translate-x-1/2 bottom-32 md:bottom-40 text-center flex justify-center gap-2 sm:gap-4 flex-wrap"
+      >
+        <button
+          id="uno-button"
+          class="hidden px-4 py-3 sm:px-6 md:px-8 sm:py-3 md:py-4 text-base sm:text-lg md:text-xl font-bold bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-all animate-pulse min-w-[100px] transform hover:scale-110"
+          aria-label="Declare UNO"
+        >
+          UNO!
+        </button>
+        <button
+          id="call-uno-on-opponent-button"
+          class="hidden px-4 py-3 sm:px-6 md:px-8 sm:py-3 md:py-4 text-base sm:text-lg md:text-xl font-bold bg-yellow-400 text-black rounded-full shadow-lg hover:bg-yellow-500 transition-all min-w-[140px] transform hover:scale-110"
+        >
+          Panggil UNO Lawan!
+        </button>
+        <button
+          id="play-multiple-button"
+          class="hidden px-4 py-3 sm:px-6 md:px-8 sm:py-3 md:py-4 text-base sm:text-lg md:text-xl font-bold bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 transition-all min-w-[160px] transform hover:scale-110"
+        >
+          Mainkan Semua Kartu Sama
+        </button>
+      </div>
     </div>
 
     <!-- Start Modal -->
-    <div id="start-modal" class="fixed inset-0 w-full h-full bg-black/70 flex justify-center items-center z-40 p-2">
-        <div class="bg-white text-black p-4 sm:p-6 md:p-8 rounded-lg text-center shadow-xl flex flex-col gap-3 sm:gap-4 mx-2 sm:mx-4 max-w-sm w-full">
-            <div class="text-xl sm:text-2xl md:text-3xl font-bold">
-                Selamat Datang di
-                <img class="w-16 sm:w-20 inline-flex" src="assets/logo.png" alt="UNO Logo">
-            </div>
-            <p class="text-sm sm:text-base md:text-lg">Saldo Anda: $<span id="modal-balance">5000</span></p>
-            
-            <div class="w-full">
-                <label class="block mb-1 font-semibold text-sm">Mode Permainan:</label>
-                <select id="mode-select" class="p-2 border rounded-md text-center w-full text-sm">
-                    <option value="bot">vs Bot</option>
-                    <option value="player2">vs Player 2 (Lokal)</option>
-                </select>
-            </div>
-            
-            <div class="w-full">
-                <label class="block mb-1 font-semibold text-sm">Kesulitan Bot:</label>
-                <select id="difficulty" class="p-2 border rounded-md text-center w-full text-sm">
-                    <option value="easy">Easy (Bot pemula)</option>
-                    <option value="medium" selected>Medium (Bot standar)</option>
-                    <option value="hard">Hard (Bot expert)</option>
-                </select>
-            </div>
-            
-            <div class="w-full">
-                <label for="bet-level" class="block mb-1 font-semibold text-sm">Level Taruhan:</label>
-                <select id="bet-level" class="p-2 border rounded-md text-center w-full text-sm">
-                    <option value="low">Low ($100, x1)</option>
-                    <option value="medium">Medium ($500, x1.5)</option>
-                    <option value="high">High ($1000, x2)</option>
-                </select>
-                <button id="all-in-button" class="mt-2 w-full bg-red-500 text-white py-2 rounded-md text-sm hidden">All-In!</button>
-            </div>
-            
-            <button id="start-game-button" class="w-full bg-green-500 text-white font-bold py-2 sm:py-3 rounded-lg hover:bg-green-600 transition-colors text-sm sm:text-lg md:text-xl">Mulai Ronde</button>
-            
-            <!-- Statistics -->
-            <div class="mt-4 p-3 bg-gray-100 rounded-lg text-left">
-                <h4 class="font-bold text-sm mb-2">📊 Statistik Game:</h4>
-                <div class="text-xs space-y-1">
-                    <div>Total Game: <span id="stat-games">0</span></div>
-                    <div>Menang: <span id="stat-wins">0</span></div>
-                    <div>Streak Tertinggi: <span id="stat-best-streak">0</span></div>
-                </div>
-            </div>
+    <div
+      id="start-modal"
+      class="fixed inset-0 w-full h-full bg-black/70 flex justify-center items-center z-40 p-2"
+    >
+      <div
+        class="bg-white text-black p-4 sm:p-6 md:p-8 rounded-lg text-center shadow-xl flex flex-col gap-3 sm:gap-4 mx-2 sm:mx-4 max-w-sm w-full"
+      >
+        <div class="text-xl sm:text-2xl md:text-3xl font-bold">
+          Selamat Datang di
+          <img
+            class="w-16 sm:w-20 inline-flex"
+            src="assets/logo.png"
+            alt="UNO Logo"
+          />
         </div>
+        <p class="text-sm sm:text-base md:text-lg">
+          Saldo Anda: $<span id="modal-balance">5000</span>
+        </p>
+
+        <div class="w-full">
+          <label class="block mb-1 font-semibold text-sm"
+            >Mode Permainan:</label
+          >
+          <select
+            id="mode-select"
+            class="p-2 border rounded-md text-center w-full text-sm"
+          >
+            <option value="bot">VS COMPUTER</option>
+            <option value="player2">vs Player 2 (Lokal)</option>
+          </select>
+        </div>
+
+        <div class="w-full">
+          <label class="block mb-1 font-semibold text-sm">DIFFICULTY</label>
+          <select
+            id="difficulty"
+            class="p-2 border rounded-md text-center w-full text-sm"
+          >
+            <option value="easy">EASY</option>
+            <option value="medium" selected>MEDIUM</option>
+            <option value="hard">EXPERT AI</option>
+          </select>
+        </div>
+
+        <div class="w-full">
+          <label for="bet-level" class="block mb-1 font-semibold text-sm"
+            >Level Taruhan:</label
+          >
+          <select
+            id="bet-level"
+            class="p-2 border rounded-md text-center w-full text-sm"
+          >
+            <option value="low">Low ($100, x1)</option>
+            <option value="medium">Medium ($500, x1.5)</option>
+            <option value="high">High ($1000, x2)</option>
+          </select>
+          <button
+            id="all-in-button"
+            class="mt-2 w-full bg-red-500 text-white py-2 rounded-md text-sm hidden"
+          >
+            All-In!
+          </button>
+        </div>
+
+        <button
+          id="start-game-button"
+          class="w-full bg-green-500 text-white font-bold py-2 sm:py-3 rounded-lg hover:bg-green-600 transition-colors text-sm sm:text-lg md:text-xl"
+        >
+          Mulai Ronde
+        </button>
+
+        <!-- Statistics -->
+        <div class="mt-4 p-3 bg-gray-100 rounded-lg text-left">
+          <h4 class="font-bold text-sm mb-2">📊 Statistik Game:</h4>
+          <div class="text-xs space-y-1">
+            <div>Total Game: <span id="stat-games">0</span></div>
+            <div>Menang: <span id="stat-wins">0</span></div>
+            <div>Streak Tertinggi: <span id="stat-best-streak">0</span></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Color Picker Modal -->
-    <div id="color-picker-modal" class="hidden fixed inset-0 w-full h-full bg-black/70 flex justify-center items-center z-40 p-2">
-        <div class="bg-white text-black p-4 sm:p-6 md:p-8 rounded-lg text-center shadow-xl w-full max-w-xs">
-            <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4">Pilih Warna</h3>
-            <div class="flex gap-1 sm:gap-2 md:gap-4 justify-center flex-wrap">
-                <button class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-red-500" data-color="red"></button>
-                <button class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-green-500" data-color="green"></button>
-                <button class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-blue-500" data-color="blue"></button>
-                <button class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-yellow-400" data-color="yellow"></button>
-            </div>
+    <div
+      id="color-picker-modal"
+      class="hidden fixed inset-0 w-full h-full bg-black/70 flex justify-center items-center z-40 p-2"
+    >
+      <div
+        class="bg-white text-black p-4 sm:p-6 md:p-8 rounded-lg text-center shadow-xl w-full max-w-xs"
+      >
+        <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4">
+          Pilih Warna
+        </h3>
+        <div class="flex gap-1 sm:gap-2 md:gap-4 justify-center flex-wrap">
+          <button
+            class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-red-500"
+            data-color="red"
+          ></button>
+          <button
+            class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-green-500"
+            data-color="green"
+          ></button>
+          <button
+            class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-blue-500"
+            data-color="blue"
+          ></button>
+          <button
+            class="color-choice w-10 h-10 sm:w-12 md:w-16 h-10 sm:h-12 md:h-16 border-4 border-gray-400 rounded-lg transition-transform duration-200 hover:scale-110 bg-yellow-400"
+            data-color="yellow"
+          ></button>
         </div>
+      </div>
     </div>
 
     <!-- Game Over Modal -->
-    <div id="game-over-modal" class="hidden fixed inset-0 w-full h-full bg-black/70 flex justify-center items-center z-40 p-2">
-        <div class="bg-white text-black p-4 sm:p-6 md:p-8 rounded-lg text-center shadow-xl flex flex-col gap-3 sm:gap-4 mx-2 sm:mx-4 max-w-sm w-full">
-            <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-red-600">Game Over!</h2>
-            <p class="text-sm sm:text-base md:text-lg">Sayang sekali, saldo Anda habis.</p>
-            <div class="text-sm text-gray-600">
-                <p>Statistik Akhir:</p>
-                <p>Total Game: <span id="final-games">0</span></p>
-                <p>Kemenangan: <span id="final-wins">0</span></p>
-            </div>
-            <button id="restart-game-button" class="w-full bg-blue-500 text-white font-bold py-2 sm:py-3 rounded-lg hover:bg-blue-600 transition-colors text-sm sm:text-lg md:text-xl">Mulai Ulang</button>
+    <div
+      id="game-over-modal"
+      class="hidden fixed inset-0 w-full h-full bg-black/70 flex justify-center items-center z-40 p-2"
+    >
+      <div
+        class="bg-white text-black p-4 sm:p-6 md:p-8 rounded-lg text-center shadow-xl flex flex-col gap-3 sm:gap-4 mx-2 sm:mx-4 max-w-sm w-full"
+      >
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-red-600">
+          Game Over!
+        </h2>
+        <p class="text-sm sm:text-base md:text-lg">
+          Sayang sekali, saldo Anda habis.
+        </p>
+        <div class="text-sm text-gray-600">
+          <p>Statistik Akhir:</p>
+          <p>Total Game: <span id="final-games">0</span></p>
+          <p>Kemenangan: <span id="final-wins">0</span></p>
         </div>
-    </div>
-
-    <!-- Alert Modal -->
-    <div id="alert-modal" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-sm bg-white text-black rounded-lg shadow-xl p-4 flex items-center gap-3">
-        <div id="alert-icon" class="w-6 h-6 rounded-full"></div>
-        <div id="alert-message" class="text-sm font-medium"></div>
-        <button id="alert-close" class="ml-auto text-gray-500 hover:text-gray-700">&times;</button>
+        <button
+          id="restart-game-button"
+          class="w-full bg-blue-500 text-white font-bold py-2 sm:py-3 rounded-lg hover:bg-blue-600 transition-colors text-sm sm:text-lg md:text-xl"
+        >
+          Mulai Ulang
+        </button>
+      </div>
     </div>
 
     <!-- Audio Elements -->
     <audio id="sound-draw" preload="auto">
-        <source src="assets/sounds/draw.mp3" type="audio/mpeg">
+      <source src="assets/sounds/draw-sound.mp3" type="audio/mpeg" />
     </audio>
     <audio id="sound-play" preload="auto">
-        <source src="assets/sounds/draw4-sound.mp3" type="audio/mpeg">
+      <source src="assets/sounds/draw4-sound.mp3" type="audio/mpeg" />
     </audio>
     <audio id="sound-uno" preload="auto">
-        <source src="assets/sounds/uno.mp3" type="audio/mpeg">
+      <source src="assets/sounds/uno.mp3" type="audio/mpeg" />
     </audio>
     <audio id="sound-win" preload="auto">
-        <source src="assets/sounds/wild-sound.mp3" type="audio/mpeg">
+      <source src="assets/sounds/wild-sound.mp3" type="audio/mpeg" />
     </audio>
     <audio id="sound-bg" loop preload="auto">
-        <source src="assets/sounds/background.mp3" type="audio/mpeg">
+      <source src="assets/sounds/background.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="sound-gameover" preload="auto">
+      <source src="assets/sounds/game-over-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="sound-skip" preload="auto">
+      <source src="assets/sounds/skip-sound.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="sound-shuffle" preload="auto">
+      <source src="assets/sounds/shuffling-cards-1.mp3" type="audio/mpeg" />
     </audio>
 
     <script src="assets/js/main.js"></script>
-</body>
-</html>     
+  </body>
+</html>
